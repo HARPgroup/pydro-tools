@@ -17,9 +17,9 @@ def main():
     omid = sys.argv[2]
 
     runinfo_df = get_runinfo(runid, omid)
-    elemname = runinfo_df.elemname
-    elemname = [elemname]
-    print(elemname[-1])
+    elemname = runinfo_df["elemname"]
+    elemname = pd.Series.to_string(elemname) 
+    elemname = elemname.replace("0    ", "")
 
     df = get_rundata(runid, omid)
     Qout = df.Qout
@@ -48,11 +48,14 @@ def main():
     plt.boxplot(data)
 
     # add title
-    plt.title("{}: Qout by Month".format(elemname))
+    plt.title("{}: Qout by Month, Run {}".format(elemname,runid))
 
     # add axis labels
     plt.xlabel("Month")
     plt.ylabel("Qout (cfs)")
+
+    # set axis limits
+    plt.ylim([0, 2000])
 
     # save plot
     plt.savefig("boxplot_Qout_{}.{}.png".format(runid, omid),bbox_inches='tight')
