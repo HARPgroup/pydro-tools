@@ -19,10 +19,11 @@ def main():
     # print(gw_df.head())
 
     # return only those with a below normal drought status
-    sw_status_df = gw_df.query('`[nonex_pct]_propcode` > 0')
-    print(sw_status_df[['Drought_Evaluation_Region', '[nonex_pct]_propcode']])
-    # print(sw_status_df.loc[sw_status_df['[nonex_pct]_propcode'].idxmax()])
-
+    gw_status_df = gw_df.query('`[nonex_pct]_propcode` > 0')
+    # print(gw_status_df[['Drought_Evaluation_Region', '[nonex_pct]_propcode']])
+    gw_status_df = gw_status_df[['Drought_Evaluation_Region', '[nonex_pct]_propcode']]
+    gw_max_status_df = gw_status_df.groupby(['Drought_Evaluation_Region']).max()
+    print(gw_max_status_df)
 
     res_df = get_data_vahydro(viewurl = 'reservoir-drought-features-export')
     # print(res_df.head())
@@ -31,7 +32,7 @@ def main():
 def get_data_vahydro(viewurl, baseurl = "http://deq1.bse.vt.edu:81/d.dh"):
 
     url = baseurl + "/" + viewurl
-    print("Retrieving Data From: " + url)
+    # print("Retrieving Data From: " + url)
     df=pd.read_csv(url)
 
     return df
