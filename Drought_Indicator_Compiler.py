@@ -1,6 +1,6 @@
 # Import libraries
 import pandas as pd
-
+from pandasql import sqldf
 
 def main():
 
@@ -10,9 +10,17 @@ def main():
     # reutrn only the 11 official drought evaluation region stream gage indicators
     sw_official_df = sw_df[pd.notna(sw_df)['official_drought_region'] == True]
 
-    # return only those with a below normal drought status
-    sw_status_df = sw_official_df.query('`[nonex_pct]_propcode` > 0')
-    print(sw_status_df[['official_drought_region', '[nonex_pct]_propcode']])
+    # return only those with a below normal drought status:
+    # pandas method below:
+    # sw_status_df = sw_official_df.query('`[nonex_pct]_propcode` > 0')
+    # print(sw_status_df[['official_drought_region', '[nonex_pct]_propcode']])
+    
+    # sqldf method below:
+    # note: 3-quote method allows formatting query across multiple lines
+    sw_status_df = sqldf("""SELECT `official_drought_region`, `[nonex_pct]_propcode` 
+                            FROM sw_official_df 
+                            WHERE `[nonex_pct]_propcode` > 0""")
+    print(sw_status_df)
 
 
     gw_df = get_data_vahydro(viewurl = 'groundwater-drought-timeseries-all-export')
