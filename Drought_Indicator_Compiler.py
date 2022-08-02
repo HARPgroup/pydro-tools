@@ -25,7 +25,7 @@ def main():
                             FROM sw_official_df""")
                             # WHERE `[nonex_pct]_propcode` > 0""")
     print(sw_status_df)
-
+    print(' ') 
 
     gw_df = get_data_vahydro(viewurl = 'groundwater-drought-timeseries-all-export')
     # print(gw_df.head())
@@ -34,7 +34,7 @@ def main():
     gw_status_df = gw_df.query('`[nonex_pct]_propcode` > 0')
     # print(gw_status_df[['drought_evaluation_region', '[nonex_pct]_propcode']])
     gw_status_df = gw_status_df[['drought_evaluation_region', '[nonex_pct]_propcode', 'drought_status_override']]
-    print(gw_status_df)
+    # print(gw_status_df)
 
     # gw_max_status_df = gw_status_df.groupby(['drought_evaluation_region']).max()
     # print(gw_max_status_df)
