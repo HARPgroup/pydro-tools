@@ -1,8 +1,6 @@
 # Import libraries
 import pandas as pd
 from pandasql import sqldf
-import geopandas as gpd
-import folium
 
 def main():
 
@@ -60,9 +58,6 @@ def main():
     # print(res_status_df)
 
 
-    map = mapgen(test = 'test')
-
-
 def get_data_vahydro(viewurl, baseurl = "http://deq1.bse.vt.edu:81/d.dh"):
 
     url = baseurl + "/" + viewurl
@@ -70,21 +65,6 @@ def get_data_vahydro(viewurl, baseurl = "http://deq1.bse.vt.edu:81/d.dh"):
     df=pd.read_csv(url)
 
     return df
-
-
-
-def mapgen(test):
-    print(test)
-
-    states_df = pd.read_csv('https://raw.githubusercontent.com/HARPgroup/HARParchive/master/GIS_layers/STATES.tsv', sep='\t')
-    print(states_df.head())
-
-    m = folium.Map(location=[37.412664, -78.680033], zoom_start=8)
-    # m = folium.Map(location=[37.412664, -78.680033], tiles="cartodbpositron", zoom_start=8)
-    m.save("drought_map.html")
-
-    return states_df
-
 
 
 if __name__ == "__main__":
