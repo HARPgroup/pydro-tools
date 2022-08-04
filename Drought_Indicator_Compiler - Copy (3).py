@@ -3,8 +3,7 @@ import pandas as pd
 from pandasql import sqldf
 import geopandas as gpd
 import folium
-# from shapely import wkt
-import matplotlib.pyplot as plt
+from shapely import wkt
 
 def main():
 
@@ -78,24 +77,32 @@ def get_data_vahydro(viewurl, baseurl = "http://deq1.bse.vt.edu:81/d.dh"):
 def mapgen(test):
     print(test)
 
-    # import data layer as dataframe
     states_df = pd.read_csv('https://raw.githubusercontent.com/HARPgroup/HARParchive/master/GIS_layers/STATES.tsv', sep='\t')
-    
-    # convert to GeoDataFrame
     states_df['geom'] = gpd.GeoSeries.from_wkt(states_df['geom'])
     states_gdf = gpd.GeoDataFrame(states_df, geometry='geom')
 
+
     # states_df.rename(columns = {"geom":"geometry"}, inplace = True)
-    # print(states_df.head())
-    # print(states_gdf.head())
-    # states_gdf.plot()
-    states_gdf.plot(figsize=(6, 6))
-    plt.show()
+    print(states_df.head())
+    print(states_gdf.head())
+
+    states_gdf.plot()
+
+    # states_df.plot()
+
     # m = folium.Map(location=[37.412664, -78.680033], zoom_start=8)
-    # # m = folium.Map(location=[37.412664, -78.680033], tiles="cartodbpositron", zoom_start=8)
+    # m = folium.Map(location=[37.412664, -78.680033], tiles="cartodbpositron", zoom_start=8)
     # m.save("drought_map.html")
 
-    return states_gdf
+    # states_df.plot(figsize=(6, 6))
+    
+
+    # path = gpd.datasets.get_path('nybb')
+    # df = gpd.read_file(states_df)
+    # print(df.head())
+
+    # return states_df
+    return states_df
 
 
 
