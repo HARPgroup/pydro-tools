@@ -17,53 +17,37 @@ def main():
     
     # sqldf method below:
     # note: 3-quote method allows formatting query across multiple lines
-    sw_status_df = sqldf("""SELECT `drought_evaluation_region`, 
-                                `[q_7day_cfs]_tstime` AS tstime, 
-                                `[q_7day_cfs]_tsendtime` AS tsendtime, 
-                                `[nonex_pct]_propcode`, 
-                                `drought_status_override`,
+    sw_status_df = sqldf("""SELECT `drought_evaluation_region`, `[nonex_pct]_propcode`, `drought_status_override`,
                                 CASE
                                     WHEN `drought_status_override` < `[nonex_pct]_propcode` THEN `drought_status_override`
                                     ELSE `[nonex_pct]_propcode`
                                 END AS final_status
-                            FROM sw_official_df
-                            WHERE `[nonex_pct]_propcode` > 0""")
-                            # FROM sw_official_df""") 
-    print(f'Surface Water Indicators:\n{sw_status_df}\n')
-
-    sw_status_df_all = sqldf("""SELECT `containing_drought_region`, 
-                                `[q_7day_cfs]_tstime` AS tstime, 
-                                `[q_7day_cfs]_tsendtime` AS tsendtime, 
-                                `[nonex_pct]_propcode`, 
-                                `drought_status_override`,
-                                CASE
-                                    WHEN `drought_status_override` < `[nonex_pct]_propcode` THEN `drought_status_override`
-                                    ELSE `[nonex_pct]_propcode`
-                                END AS final_status
-                            FROM sw_df
-                            WHERE `[nonex_pct]_propcode` > 0""")
-    print(f'Surface Water Indicators (All):\n{sw_status_df_all}\n')
-
-
+                            FROM sw_official_df""")
+                            # WHERE `[nonex_pct]_propcode` > 0""")
+    print(sw_status_df)
+    print(' ') 
 
     gw_df = get_data_vahydro(viewurl = 'groundwater-drought-timeseries-all-export')
     # print(gw_df.head())
 
     # return only those with a below normal drought status
-    # retuen the maximum status by region for those regions with multiple gw indicators
-    gw_max_status_df = sqldf("""SELECT `drought_evaluation_region`, 
-                                    `[gwl_7day_ft]_tstime` AS tstime, 
-                                    `[gwl_7day_ft]_tsendtime` AS tsendtime, 
-                                    MAX(`[nonex_pct]_propcode`) AS max_status, 
-                                    `drought_status_override`,
+    gw_status_df = gw_df.query('`[nonex_pct]_propcode` > 0')
+    # print(gw_status_df[['drought_evaluation_region', '[nonex_pct]_propcode']])
+    gw_status_df = gw_status_df[['drought_evaluation_region', '[nonex_pct]_propcode', 'drought_status_override']]
+    # print(gw_status_df)
+
+    # gw_max_status_df = gw_status_df.groupby(['drought_evaluation_region']).max()
+    # print(gw_max_status_df)
+
+    gw_max_status_df = sqldf("""SELECT `drought_evaluation_region`, MAX(`[nonex_pct]_propcode`) AS max_status, `drought_status_override`,
                                     CASE
                                         WHEN `drought_status_override` < `[nonex_pct]_propcode` THEN `drought_status_override`
                                         ELSE `[nonex_pct]_propcode`
                                     END AS final_status
-                                FROM gw_df
+                                FROM gw_status_df
                                 WHERE `[nonex_pct]_propcode` > 0
                                 GROUP BY `drought_evaluation_region`""")
-    print(f'Groundwater Indicators:\n{gw_max_status_df}\n')
+    print(gw_max_status_df)
 
 
     res_df = get_data_vahydro(viewurl = 'reservoir-drought-features-export')
