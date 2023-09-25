@@ -10,11 +10,12 @@ def main():
 
     # Ensure correct usage
     # Salem omid = 249169
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 4:
         sys.exit("Usage: python boxplots.py runid omid")
 
     runid = sys.argv[1]
     omid = sys.argv[2]
+    metric = sys.argv[3]
 
     runinfo_df = get_runinfo(runid, omid)
     elemname = runinfo_df["elemname"]
@@ -22,9 +23,10 @@ def main():
     elemname = elemname.replace("0    ", "")
 
     df = get_rundata(runid, omid)
-    Qout = df.Qout
-
+    # Qout = df[metric]
+    print(df.columns.tolist())
     # quantiles = np.quantile(Qout, [0, 0.1, 0.25, 0.5, 0.75, 0.9, 1.0])
+    # metric = 'Qout'
 
     data_jan = df[df['month'] == 1]
     data_feb = df[df['month'] == 2]
@@ -39,8 +41,8 @@ def main():
     data_nov = df[df['month'] == 11]
     data_dec = df[df['month'] == 12]
 
-    data = [data_jan.Qout, data_feb.Qout, data_mar.Qout, data_apr.Qout, data_may.Qout, data_jun.Qout,
-    data_jul.Qout, data_aug.Qout, data_sep.Qout, data_oct.Qout, data_nov.Qout, data_dec.Qout]
+    data = [data_jan[metric], data_feb[metric], data_mar[metric], data_apr[metric], data_may[metric], data_jun[metric],
+    data_jul[metric], data_aug[metric], data_sep[metric], data_oct[metric], data_nov[metric], data_dec[metric]]
     
     # fig = plt.figure(figsize =(10, 7))
     fig, ax = plt.subplots(constrained_layout=True)
@@ -49,13 +51,14 @@ def main():
     plt.boxplot(data)
 
     # add title
-    plt.title("{}: Qout by Month, Run {}".format(elemname,runid))
+    plt.title("{}: {} by Month, Run {}".format(elemname,metric,runid))
 
     # add axis labels
     plt.xlabel("Month")
     # plt.ylabel("Qout (cfs)", color = 'b', loc='bottom')
 
     # set axis limits
+    # print(max(data))
     plt.ylim([0, 1500])
 
     # secondary axis in mgd
@@ -70,13 +73,13 @@ def main():
     # secax_y2 = ax.secondary_yaxis(1.2, functions=(mgd_to_anomaly, anomaly_to_mgd))
     # secax_y2 = ax.secondary_yaxis('right', functions=(mgd_to_anomaly, anomaly_to_mgd))
     secax_y2 = ax.secondary_yaxis(-0.1, functions=(mgd_to_anomaly, anomaly_to_mgd))
-    secax_y2.set_ylabel("Qout", color = 'black', loc='center')
+    secax_y2.set_ylabel(metric, color = 'black', loc='center')
 
     plt.text(-0.05, -0.06, "cfs", fontsize=10, transform = ax.transAxes)
     plt.text(-0.16, -0.06, "mgd", fontsize=10, transform = ax.transAxes)
 
     # save plot
-    plt.savefig("boxplot_Qout_{}.{}.png".format(runid, omid),bbox_inches='tight')
+    plt.savefig("boxplot_{}_{}.{}.png".format(metric, runid, omid),bbox_inches='tight')
 
     # show plot
     plt.show()
